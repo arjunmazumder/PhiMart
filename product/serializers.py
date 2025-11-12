@@ -3,9 +3,12 @@ from decimal import Decimal
 from product.models import Product, Category
 
 class CategorySerializer(serializers.ModelSerializer):
+    product_count = serializers.IntegerField()
     class Meta:
         model = Category
-        fields = ['id', 'name', 'description']
+        fields = ['id', 'name', 'description', 'product_count']
+
+    
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -13,7 +16,7 @@ class ProductSerializer(serializers.ModelSerializer):
     
     category = serializers.HyperlinkedRelatedField(
         queryset=Category.objects.all(),
-        view_name='view-specific-product'
+        view_name='view-specific-category'
     )
 
     class Meta:
