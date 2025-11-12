@@ -19,7 +19,7 @@ def view_products(request):
         return Response(serializer.data)
     
     if request.method == 'POST':
-        serializer = ProductSerializer(data = request.data, context={'request': request})
+        serializer = ProductSerializer(data = request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -31,6 +31,21 @@ def view_specific_product(request, pk):
     product = get_object_or_404(Product, pk=pk)
     serializer = ProductSerializer(product, context={'request': request})
     return Response(serializer.data)
+
+@api_view(['GET','POST'])
+def view_categories(request):
+    if request.method == 'GET':
+        categories = Category.objects.annotate(product_count=Count('products')).all()
+        serializer = CategorySerializer(categories, many=True)
+        return Response(serializer.data)
+    if request.method == 'POST':
+        serializer = CategorySerializer(data = request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
  
 @api_view()
 def view_specific_category(request, pk):
@@ -38,8 +53,3 @@ def view_specific_category(request, pk):
     serializer = CategorySerializer(category) 
     return Response(serializer.data)
 
-@api_view()
-def view_categories(request):
-    categories = Category.objects.annotate(product_count=Count('products')).all()
-    serializer = CategorySerializer(categories, many=True)
-    return Response(serializer.data)
