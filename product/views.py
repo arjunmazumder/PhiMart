@@ -47,19 +47,19 @@ from rest_framework.views import APIView
 #         product.delete()
 #         return Response(status=status.HTTP_204_NO_CONTENT)
 
-@api_view(['GET','POST'])
-def view_categories(request):
-    if request.method == 'GET':
-        categories = Category.objects.annotate(product_count=Count('products')).all()
-        serializer = CategorySerializer(categories, many=True)
-        return Response(serializer.data)
-    if request.method == 'POST':
-        serializer = CategorySerializer(data = request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+# @api_view(['GET','POST'])
+# def view_categories(request):
+#     if request.method == 'GET':
+#         categories = Category.objects.annotate(product_count=Count('products')).all()
+#         serializer = CategorySerializer(categories, many=True)
+#         return Response(serializer.data)
+#     if request.method == 'POST':
+#         serializer = CategorySerializer(data = request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data, status=status.HTTP_201_CREATED)
+#         else:
+#             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
                  
 @api_view(['GET', 'PUT', 'DELETE'])
 def view_specific_category(request, pk):
@@ -122,4 +122,17 @@ class ViewSpecificProduct(APIView):
         serializer = ProductSerializer(copy_data, context = {'request': request})
         return Response(serializer.data, status=status.HTTP_204_NO_CONTENT)
 
+
+class ViewCategories(APIView):
+    def get(self, request):
+        categories = Category.objects.annotate(product_count=Count('products')).all()
+        serializer = CategorySerializer(categories, many=True)
+        return Response(serializer.data)
+    def post(self, request):
+        serializer = CategorySerializer(data = request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
