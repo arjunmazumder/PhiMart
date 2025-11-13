@@ -7,6 +7,7 @@ from product.models import Product, Category
 from product.serializers import ProductSerializer, CategorySerializer
 from django.db.models import Count
 
+# Function base views
 @api_view(['GET', 'POST'])
 def view_products(request):
     if request.method == 'GET':
@@ -79,7 +80,5 @@ def view_specific_category(request, pk):
         category.delete()
         serializer = CategorySerializer(delete_data, context = {'request': request})
         return Response(serializer.data, status=status.HTTP_204_NO_CONTENT)
-
-        
 
 
