@@ -28,24 +28,24 @@ from rest_framework.views import APIView
 #         else:
 #             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)    
 
-@api_view(['GET', 'PUT', 'DELETE'])
-def view_specific_product(request, pk):
-    if request.method == 'GET':
-        product = get_object_or_404(Product, pk=pk)
-        serializer = ProductSerializer(product, context={'request': request})
-        return Response(serializer.data)
+# @api_view(['GET', 'PUT', 'DELETE'])
+# def view_specific_product(request, pk):
+#     if request.method == 'GET':
+#         product = get_object_or_404(Product, pk=pk)
+#         serializer = ProductSerializer(product, context={'request': request})
+#         return Response(serializer.data)
     
-    if request.method == 'PUT':
-        product = get_object_or_404(Product, pk=pk)
-        serializer = ProductSerializer(product, data=request.data, context={'request': request})
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response(serializer.data)
+#     if request.method == 'PUT':
+#         product = get_object_or_404(Product, pk=pk)
+#         serializer = ProductSerializer(product, data=request.data, context={'request': request})
+#         if serializer.is_valid(raise_exception=True):
+#             serializer.save()
+#             return Response(serializer.data)
 
-    if request.method == 'DELETE':
-        product = get_object_or_404(Product, pk=pk)
-        product.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+#     if request.method == 'DELETE':
+#         product = get_object_or_404(Product, pk=pk)
+#         product.delete()
+#         return Response(status=status.HTTP_204_NO_CONTENT)
 
 @api_view(['GET','POST'])
 def view_categories(request):
@@ -102,3 +102,24 @@ class ViewProducts(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
+
+class ViewSpecificProduct(APIView):
+    def get(self, request, pk):
+        product = get_object_or_404(Product, pk=pk)
+        serializer = ProductSerializer(product, context={'request': request})
+        return Response(serializer.data)
+    def put(self, request, pk):
+        product = get_object_or_404(Product, pk=pk)
+        serializer = ProductSerializer(product, data=request.data, context={'request': request})
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(serializer.data)
+
+    def delete(self, request, pk):
+        product = get_object_or_404(Product, pk=pk)
+        copy_data = product
+        product.delete()
+        serializer = ProductSerializer(copy_data, context = {'request': request})
+        return Response(serializer.data, status=status.HTTP_204_NO_CONTENT)
+
+
