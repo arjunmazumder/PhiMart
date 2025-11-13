@@ -61,26 +61,26 @@ from rest_framework.views import APIView
 #         else:
 #             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
                  
-@api_view(['GET', 'PUT', 'DELETE'])
-def view_specific_category(request, pk):
-    if request.method == 'GET':
-        category = get_object_or_404(Category,pk=pk)
-        serializer = CategorySerializer(category) 
-        return Response(serializer.data)
+# @api_view(['GET', 'PUT', 'DELETE'])
+# def view_specific_category(request, pk):
+#     if request.method == 'GET':
+#         category = get_object_or_404(Category,pk=pk)
+#         serializer = CategorySerializer(category) 
+#         return Response(serializer.data)
     
-    if request.method == 'PUT':
-        category = get_object_or_404(Category, pk=pk)
-        serializer = CategorySerializer(category, data=request.data, context = {'request': request})
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
+#     if request.method == 'PUT':
+#         category = get_object_or_404(Category, pk=pk)
+#         serializer = CategorySerializer(category, data=request.data, context = {'request': request})
+#         if serializer.is_valid(raise_exception=True):
+#             serializer.save()
+#             return Response(serializer.data, status=status.HTTP_200_OK)
         
-    if request.method == 'DELETE':
-        category = get_object_or_404(Category, pk=pk)
-        delete_data = category
-        category.delete()
-        serializer = CategorySerializer(delete_data, context = {'request': request})
-        return Response(serializer.data, status=status.HTTP_204_NO_CONTENT)
+#     if request.method == 'DELETE':
+#         category = get_object_or_404(Category, pk=pk)
+#         delete_data = category
+#         category.delete()
+#         serializer = CategorySerializer(delete_data, context = {'request': request})
+#         return Response(serializer.data, status=status.HTTP_204_NO_CONTENT)
 
 
 #class base views
@@ -135,4 +135,33 @@ class ViewCategories(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class ViewSpecificCategory(APIView):
+    def get(self, request, pk):
+        category = get_object_or_404(
+            Category.objects.annotate(product_count=Count('products')).all(),
+            pk=pk
+        )
+        serializer = CategorySerializer(category) 
+        return Response(serializer.data)
+    
+    def put(self, request, pk):
+        category = get_object_or_404(
+            Category.objects.annotate(product_count=Count('products')).all(), 
+            pk=pk
+        )
+        serializer = CategorySerializer(category, data=request.data, context = {'request': request})
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
+    def delete(self, request, pk):
+        category = get_object_or_404(
+            Category.objects.annotate(product_count=Count('products')).all(), 
+            pk=pk
+        )
+        delete_data = category
+        category.delete()
+        serializer = CategorySerializer(delete_data, context = {'request': request})
+        return Response(serializer.data, status=status.HTTP_204_NO_CONTENT)
 
