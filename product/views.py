@@ -6,26 +6,27 @@ from rest_framework import status
 from product.models import Product, Category
 from product.serializers import ProductSerializer, CategorySerializer
 from django.db.models import Count
+from rest_framework.views import APIView
 
 # Function base views
-@api_view(['GET', 'POST'])
-def view_products(request):
-    if request.method == 'GET':
-        products = Product.objects.select_related('category').all()
-        serializer = ProductSerializer(
-            products,
-            many = True,
-            context = {'request': request}
-        )
-        return Response(serializer.data)
+# @api_view(['GET', 'POST'])
+# def view_products(request):
+#     if request.method == 'GET':
+#         products = Product.objects.select_related('category').all()
+#         serializer = ProductSerializer(
+#             products,
+#             many = True,
+#             context = {'request': request}
+#         )
+#         return Response(serializer.data)
     
-    if request.method == 'POST':
-        serializer = ProductSerializer(data = request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)    
+#     if request.method == 'POST':
+#         serializer = ProductSerializer(data = request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data, status=status.HTTP_201_CREATED)
+#         else:
+#             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)    
 
 @api_view(['GET', 'PUT', 'DELETE'])
 def view_specific_product(request, pk):
@@ -82,3 +83,22 @@ def view_specific_category(request, pk):
         return Response(serializer.data, status=status.HTTP_204_NO_CONTENT)
 
 
+#class base views
+
+class ViewProducts(APIView):
+    def get(self, request):
+        products = Product.objects.select_related('category').all()
+        serializer = ProductSerializer(
+            products,
+            many = True,
+            context = {'request': request}
+        )
+        return Response(serializer.data)
+    
+    def post(self, request):
+        serializer = ProductSerializer(data = request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
