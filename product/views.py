@@ -8,7 +8,7 @@ from product.serializers import ProductSerializer, CategorySerializer
 from django.db.models import Count
 from rest_framework.views import APIView
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
-
+from rest_framework.viewsets import ModelViewSet
 # Function base views
 # @api_view(['GET', 'POST'])
 # def view_products(request):
@@ -168,34 +168,45 @@ from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIV
 
 
 # Generic view class
-class ViewProducts(ListCreateAPIView):
-    def get_queryset(self):
-        return Product.objects.select_related('category').all()
-    def get_serializer_class(self):
-        return ProductSerializer
-    def get_serializer_context(self):
-        return {'request': self.request}
+# class ViewProducts(ListCreateAPIView):
+#     def get_queryset(self):
+#         return Product.objects.select_related('category').all()
+#     def get_serializer_class(self):
+#         return ProductSerializer
+#     def get_serializer_context(self):
+#         return {'request': self.request}
 
 
-class ViewSpecificProduct(RetrieveUpdateDestroyAPIView):
-    def get_queryset(self):
-        return Product.objects.select_related('category').all()
-    def get_serializer_class(self):
-        return ProductSerializer
-    def get_serializer_context(self):
-        return {'request': self.request}
+# class ViewSpecificProduct(RetrieveUpdateDestroyAPIView):
+#     def get_queryset(self):
+#         return Product.objects.select_related('category').all()
+#     def get_serializer_class(self):
+#         return ProductSerializer
+#     def get_serializer_context(self):
+#         return {'request': self.request}
 
 
 
-class ViewCategories(ListCreateAPIView):
-    def get_queryset(self):
-        return Category.objects.annotate(product_count=Count('products')).all()
-    def get_serializer_class(self):
-        return CategorySerializer
+# class ViewCategories(ListCreateAPIView):
+#     def get_queryset(self):
+#         return Category.objects.annotate(product_count=Count('products')).all()
+#     def get_serializer_class(self):
+#         return CategorySerializer
     
     
-class ViewSpecificCategory(RetrieveUpdateDestroyAPIView):
-    def get_queryset(self):
-        return Category.objects.annotate(product_count=Count('products')).all()
-    def get_serializer_class(self):
-        return CategorySerializer
+# class ViewSpecificCategory(RetrieveUpdateDestroyAPIView):
+#     def get_queryset(self):
+#         return Category.objects.annotate(product_count=Count('products')).all()
+#     def get_serializer_class(self):
+#         return CategorySerializer
+
+# Model view set
+
+class ProductModelViewSet(ModelViewSet):
+    queryset = Product.objects.select_related('category').all()
+    serializer_class = ProductSerializer
+
+
+class CategoryModelViewSet(ModelViewSet):
+    queryset = Category.objects.annotate(product_count=Count('products')).all()
+    serializer_class = CategorySerializer

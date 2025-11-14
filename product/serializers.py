@@ -14,10 +14,10 @@ class CategorySerializer(serializers.ModelSerializer):
 class ProductSerializer(serializers.ModelSerializer):
     price_with_tax = serializers.SerializerMethodField()
 
-    category = serializers.HyperlinkedRelatedField(
-        queryset=Category.objects.all(),
-        view_name='view-specific-category'
-    )
+    # category = serializers.HyperlinkedRelatedField(
+    #     queryset=Category.objects.all(),
+    #     view_name='view-specific-category'
+    # )
 
     class Meta:
         model = Product
