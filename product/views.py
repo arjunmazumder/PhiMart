@@ -11,6 +11,7 @@ from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIV
 from rest_framework.viewsets import ModelViewSet
 from django_filters.rest_framework import DjangoFilterBackend
 from product.filters import ProductFilter
+from rest_framework.filters import SearchFilter
 
 
 # Model view set
@@ -18,8 +19,9 @@ from product.filters import ProductFilter
 class ProductModelViewSet(ModelViewSet):
     queryset = Product.objects.select_related('category').all()
     serializer_class = ProductSerializer
-    filter_backends = [DjangoFilterBackend]
+    filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_class = ProductFilter
+    search_fields = ['name', 'description']
 
 
 class CategoryModelViewSet(ModelViewSet):
