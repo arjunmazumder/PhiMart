@@ -9,6 +9,8 @@ from django.db.models import Count
 from rest_framework.views import APIView
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.viewsets import ModelViewSet
+from django_filters.rest_framework import DjangoFilterBackend
+from product.filters import ProductFilter
 
 
 # Model view set
@@ -16,6 +18,8 @@ from rest_framework.viewsets import ModelViewSet
 class ProductModelViewSet(ModelViewSet):
     queryset = Product.objects.select_related('category').all()
     serializer_class = ProductSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = ProductFilter
 
 
 class CategoryModelViewSet(ModelViewSet):
@@ -29,7 +33,7 @@ class ReviewModelViewSet(ModelViewSet):
     def get_serializer_context(self):
         return {'product_id': self.kwargs['product_pk']}
 
-
+ 
 # Function base views
 
 # @api_view(['GET', 'POST'])
