@@ -31,6 +31,12 @@ class SimplifyAddCartItemSerializer(serializers.ModelSerializer):
         return product_id
 
 
+class UpdateCartItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CartItem
+        fields = ['quantity']
+
+
 class CartItemSetializer(serializers.ModelSerializer):
     product = SimplifyProductSerializer()
     total_price = serializers.SerializerMethodField(method_name='get_total_price')

@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from order.serializer import CartSerializer, CartItemSetializer, SimplifyAddCartItemSerializer
+from order.serializer import CartSerializer, CartItemSetializer, SimplifyAddCartItemSerializer, UpdateCartItemSerializer
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
 from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin, DestroyModelMixin
 from order.models import Cart, CartItem
@@ -9,10 +9,13 @@ class CartViewSet(CreateModelMixin, RetrieveModelMixin, DestroyModelMixin, Gener
     serializer_class = CartSerializer
 
 class CartItemViewSet(ModelViewSet): 
+    http_method_names=['get', 'post', 'patch', 'delete']
 
     def get_serializer_class(self):
         if self.request.method == 'POST':
             return SimplifyAddCartItemSerializer
+        elif self.request.method == 'PATCH':
+            return UpdateCartItemSerializer
         else:
             return CartItemSetializer  
 
