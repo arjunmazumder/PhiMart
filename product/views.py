@@ -1,5 +1,4 @@
 from django.shortcuts import get_object_or_404
-
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
@@ -13,7 +12,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from product.filters import ProductFilter
 from rest_framework.filters import SearchFilter, OrderingFilter
 from product.paginations import DefaultPagination
-
+from api.permissions import IsAdminOrReadOnly
 # Model view set
 
 class ProductModelViewSet(ModelViewSet):
@@ -24,11 +23,19 @@ class ProductModelViewSet(ModelViewSet):
     pagination_class = DefaultPagination
     search_fields = ['name', 'description']
     ordering_fields = ['price']
+    permission_classes = [IsAdminOrReadOnly]
+    # permission_classes = [IsAdminUser]
+    # def get_permissions(self):
+    #     if self.request.method == 'GET':
+    #         return [AllowAny()]
+    #     else:
+    #         return [IsAdminUser()]
 
 
 class CategoryModelViewSet(ModelViewSet):
     queryset = Category.objects.annotate(product_count=Count('products')).all()
     serializer_class = CategorySerializer
+    permission_classes = [IsAdminOrReadOnly]
 
 class ReviewModelViewSet(ModelViewSet):
     serializer_class = ReviewSerializer
