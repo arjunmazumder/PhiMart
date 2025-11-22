@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from order.models import Cart, CartItem, Order, OrderItem
 from product.models import Product
-# from order.services import OrderService
+from order.services import OrderService
 
 
 class EmptySerializer(serializers.Serializer):
