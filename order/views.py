@@ -49,3 +49,6 @@ class OrderViewset(ModelViewSet):
         if self.request.user.is_staff:
             return Order.objects.prefetch_related('items__product').all()
         return Order.objects.prefetch_related('items__product').filter(user=self.request.user)
+    
+    def get_serializer_context(self):
+        return {'user_id': self.request.user.id}
