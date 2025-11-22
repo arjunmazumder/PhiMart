@@ -1,8 +1,11 @@
 from rest_framework import serializers
 from order.models import Cart, CartItem, Order, OrderItem
 from product.models import Product
-from order.services import OrderService
+# from order.services import OrderService
 
+
+class EmptySerializer(serializers.Serializer):
+    pass
 
 class SimplifyProductSerializer(serializers.ModelSerializer):
     class Meta:
@@ -103,17 +106,17 @@ class UpdateOrderSerializer(serializers.ModelSerializer):
         model = Order
         fields = ['status']
 
-    def update(self, instance, validated_data):
-        user = self.context['user']
-        new_status = validated_data['status']
+    # def update(self, instance, validated_data):
+    #     user = self.context['user']
+    #     new_status = validated_data['status']
 
-        if new_status == Order.CANCELED:
-            return OrderService.cancel_order(order=instance, user=user)
+    #     if new_status == Order.CANCELED:
+    #         return OrderService.cancel_order(order=instance, user=user)
 
-        # Admin kina
-        if not user.is_staff:
-            raise serializers.ValidationError(
-                {'detail':  'You are not allowed to update this order'}
-            )
+    #     # Admin kina
+    #     if not user.is_staff:
+    #         raise serializers.ValidationError(
+    #             {'detail':  'You are not allowed to update this order'}
+    #         )
 
-        return super().update(instance, validated_data)
+    #     return super().update(instance, validated_data)
