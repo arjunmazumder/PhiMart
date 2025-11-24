@@ -9,20 +9,19 @@ class CategorySerializer(serializers.ModelSerializer):
         model = Category
         fields = ['id', 'name', 'description', 'product_count']
 
-    
 
+class ProductImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductImage
+        fields = ['id', 'image']  
 
 class ProductSerializer(serializers.ModelSerializer):
-    price_with_tax = serializers.SerializerMethodField()
-
-    # category = serializers.HyperlinkedRelatedField(
-    #     queryset=Category.objects.all(),
-    #     view_name='view-specific-category'
-    # )
+    price_with_tax = serializers.SerializerMethodField(method_name='get_price_with_tax')
+    images = ProductImageSerializer(many=True, read_only = True)
 
     class Meta:
         model = Product
-        fields = ['id', 'name', 'description', 'price', 'stock', 'category', 'price_with_tax']
+        fields = ['id', 'name', 'description', 'price', 'stock', 'category', 'price_with_tax', 'images']
 
     def get_price_with_tax(self, product):
         return round(product.price * Decimal(1.1), 2)
@@ -59,7 +58,4 @@ class ReviewSerializer(serializers.ModelSerializer):
         return reviwe  
     
 
-class ProductImageSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ProductImage
-        fields = ['id', 'image']    
+  
