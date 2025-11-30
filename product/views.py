@@ -256,9 +256,5 @@ class ProductImageViewSet(ModelViewSet):
 #         return CategorySerializer
     
     
-# class ViewSpecificCategory(RetrieveUpdateDestroyAPIView):
-#     def get_queryset(self):
-#         return Category.objects.annotate(product_count=Count('products')).all()
-#     def get_serializer_class(self):
-#         return CategorySerializer
+
 
